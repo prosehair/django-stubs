@@ -1,4 +1,4 @@
-from typing import Any, Callable, Collection, Dict, Iterable, List, Optional, Set, Tuple, Type, TypeVar, Union
+from typing import Any, Callable, Collection, Dict, Iterable, List, Optional, Set, Tuple, Type, TypeVar, Union, Generic
 
 from django.core.checks.messages import CheckMessage
 from django.core.exceptions import MultipleObjectsReturned as BaseMultipleObjectsReturned
@@ -17,14 +17,15 @@ class ModelState:
 
 class ModelBase(type): ...
 
-class Model(metaclass=ModelBase):
+T = TypeVar('T')
+
+class Model(Generic[T], metaclass=ModelBase):
     class DoesNotExist(ObjectDoesNotExist): ...
     class MultipleObjectsReturned(BaseMultipleObjectsReturned): ...
     class Meta: ...
     _meta: Options[Any]
     _default_manager: BaseManager[Model]
-    _base_manager: BaseManager[Model]
-    objects: BaseManager[Any]
+    objects: BaseManager[T]
     pk: Any = ...
     _state: ModelState
     def __init__(self: _Self, *args, **kwargs) -> None: ...
